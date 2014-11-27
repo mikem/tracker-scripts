@@ -6,6 +6,8 @@ require 'terminal-table'
 project_id = ENV['TRACKER_PROJECT_ID']
 token = ENV['TRACKER_TOKEN']
 
+velocity_weeks = 4
+
 client = TrackerApi::Client.new token: token
 project = client.project project_id
 iterations = project.iterations
@@ -85,10 +87,10 @@ summary = {
     h[:chore_count] << chore_count
     h[:story_count] << i.stories.length
   end
-  h[:velocity] = h[:points_total].reverse.first(3).reduce(0, :+) / 3
+  h[:velocity] = h[:points_total].reverse.first(velocity_weeks).reduce(0, :+) / velocity_weeks
 end
 
-summary_rows = [['Velocity', { value: "#{summary[:velocity]} (3 week avg)", colspan: 4 }]]
+summary_rows = [['Velocity', { value: "#{summary[:velocity]} (#{velocity_weeks} week avg)", colspan: 4 }]]
 summary_rows << ['Points'] + summary[:points_total].reverse
 summary_rows << ['Total Stories'] + summary[:story_count].reverse
 summary_rows << ['Feature count'] + summary[:feature_count].reverse
